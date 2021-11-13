@@ -1,0 +1,6 @@
+/.idea/
+/your_log.txt
+/log.txt
+/lib/jsoup-1.14.3.jar
+/target/classes/
+/pom.xml
