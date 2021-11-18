@@ -1,3 +1,5 @@
+package Service;
+import Model.Word;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import java.io.IOException;
@@ -6,12 +8,13 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+import java.util.stream.Collectors;
 
-public class Parser {
-    WordController wordController = new WordController();
-    private static final Logger log = Logger.getLogger( Parser.class.getName() );
+public class ParserService {
+    WordService wordService = new WordService();
+    private static final Logger log = Logger.getLogger( ParserService.class.getName() );
 
-    public Parser() throws IOException {
+    public ParserService() throws IOException {
         FileHandler fh = new FileHandler("log.txt", true);
         SimpleFormatter sf = new SimpleFormatter();
         fh.setFormatter(sf);
@@ -30,16 +33,18 @@ public class Parser {
         return null;
     }
 
-    public void getPageData(String URL) throws IOException {
+    public void getPageData(String URL){
         long start = System.currentTimeMillis();
         String textPage = getTextPage(URL);
-        String[] splitText = wordController.getSplitText(textPage);
+        textPage = textPage.toLowerCase(Locale.ROOT);
+        String[] splitText = wordService.getSplitText(textPage);
 
-        List<Word> uniqueWord = wordController.getUniqueWordCount(splitText);
+        List<Word> uniqueWord = wordService.getUniqueWordCount(splitText);
+        uniqueWord = uniqueWord.stream().sorted(Comparator.comparingInt(Word::getCount).reversed()).collect(Collectors.toList());
         uniqueWord.forEach(System.out::println);
 
-        int countWords = wordController.getTotalWordCount(uniqueWord); //Впринципе splitText.length даст тоже самое
-        Word frequentWord = wordController.getMostFrequentWord(uniqueWord);
+        int countWords = wordService.getTotalWordCount(uniqueWord); //Впринципе splitText.length даст тоже самое
+        Word frequentWord = wordService.getMostFrequentWord(uniqueWord);
         long finish = System.currentTimeMillis();
         long elapsed = finish - start;
 

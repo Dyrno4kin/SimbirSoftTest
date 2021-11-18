@@ -1,19 +1,21 @@
+package Service;
+import Interface.WordInterface;
+import Model.Word;
 import javax.naming.Name;
 import java.io.IOException;
 import java.util.*;
 
-public class WordController implements WordInterface {
+public class WordService implements WordInterface {
 
-    public String[] getSplitText(String textPage) throws IOException {
-        String[] splitString = textPage.split("[\\s.,!?;:{}()\t\n\r\f]+");
-        return splitString;
+    public String[] getSplitText(String textPage){
+        return textPage.split("[\\s.,!?;:{}()\t\n\r\f]+");
     }
 
     @Override
     public void addWord(Word word, List<Word> words) {
         int maxId = 0;
         if (words.size() > 0){
-            maxId = words.stream().max(Comparator.comparing(w -> w.getId())).orElse(null).getId();
+            maxId = words.stream().max(Comparator.comparing(Word::getId)).orElse(null).getId();
         }
         words.add(new Word(maxId+1, word.getName(), word.getCount()));
     }
@@ -41,20 +43,17 @@ public class WordController implements WordInterface {
 
     @Override
     public Word getMostFrequentWord(List<Word> uniqueWord){
-        Word frequentWord = uniqueWord.stream().max(Comparator.comparing(Word::getCount)).orElse(null);
-        return frequentWord;
+        return uniqueWord.stream().max(Comparator.comparing(Word::getCount)).orElse(null);
     }
 
     @Override
     public Word getElemById(int id, List<Word> words) {
-        Word word = words.stream().filter(w -> w.getId() == id).findFirst().orElse(null);
-        return word;
+        return words.stream().filter(w -> w.getId() == id).findFirst().orElse(null);
     }
 
     @Override
     public int getTotalWordCount(List<Word> uniqueWord){
-        int countWords = uniqueWord.stream().mapToInt(word -> word.getCount()).sum();
-        return countWords;
+        return uniqueWord.stream().mapToInt(Word::getCount).sum();
     }
 
     //Реализация через hash map

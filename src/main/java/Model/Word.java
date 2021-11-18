@@ -1,4 +1,7 @@
+package Model;
+
 public class Word {
+
     private final int id;
     private final String Name;
     private final Integer Count;
